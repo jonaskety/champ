@@ -22,7 +22,8 @@ TOKEN = "NDk3MTk0NjE1NjI0MTcxNTMx.DpbovA.vq4vn-gkO8t5SnLWBGx2wGjzdY0"
 
 # creates a reaction list for polls
 POLL_LIST = ['\U0001F44D', '\U0001F44E', '\U0001F937']
-REACT_LIST = [':smash:', ':siege:', ':rocketleague:', ':overwatch:', ':league:', ':hearthstone:', ':fortnite:', ':dota2:', ':dbfz:', ':csgo:']
+ROLE_LIST = ['smash', 'siege', 'rocketleague', 'overwatch', 'league', 'hearthstone', 'fortnite', 'dota', 'dbfz', 'csgo']
+REACT_LIST = ['smash', 'siege', 'rocketleague', 'overwatch', 'league', 'hearthstone', 'fortnite', 'dota2', 'dbfz', 'csgo']
 FLAIR_LIST = [':smash:497210123400249344', ':siege:497210123102715904', ':rocketleague:497210119646478336', ':overwatch:497210119499808770', ':league:497210123039670295', ':hearthstone:497210119772438529', ':fortnite:497210119243956236', ':dota2:497210119625637888', ':dbfz:497210124109086720', ':csgo:497210119193362433']
 
 
@@ -52,6 +53,9 @@ async def info(context):
 	embed.set_footer(text="") 
 	await client.say(embed=embed)
 
+	
+	
+	
 #flairing
 @client.command(name="flair",
 				description="Allows users to flair themselves using various reactions",
@@ -70,15 +74,72 @@ async def flair(context):
 # add flair to when a user reacts
 @client.event
 async def on_reaction_add(reaction, user):
-	if reaction.emoji in REACT_LIST:
-		channel = reaction.message.channel
-		await client.send_message(channel, '{} has added {} to the the message {}'.format(user.name, reaction.emoji, reaction.message))
+	channelID = '446058435646324736'
+	if reaction.message.author != user:
+		if reaction.message.channel.id != channelID:
+			return
+		if reaction.emoji.name in REACT_LIST:
+			if reaction.emoji.name == "smash":
+				role = discord.utils.get(user.server.roles, name='smash')
+			if reaction.emoji.name == "siege":
+				role = discord.utils.get(user.server.roles, name='siege')
+			if reaction.emoji.name == "rocketleague":
+				role = discord.utils.get(user.server.roles, name='rocketleague')
+			if reaction.emoji.name == "overwatch":
+				role = discord.utils.get(user.server.roles, name='overwatch')
+			if reaction.emoji.name == "league":
+				role = discord.utils.get(user.server.roles, name='league')
+			if reaction.emoji.name == "hearthstone":
+				role = discord.utils.get(user.server.roles, name='hearthstone')
+			if reaction.emoji.name == "fortnite":
+				role = discord.utils.get(user.server.roles, name='fortnite')
+			if reaction.emoji.name == "dota2":
+				role = discord.utils.get(user.server.roles, name='dota')
+			if reaction.emoji.name == "dbfz":
+				role = discord.utils.get(user.server.roles, name='dbfz')
+			if reaction.emoji.name == "csgo":
+				role = discord.utils.get(user.server.roles, name='csgo')
+				
+			await client.add_roles(user, role)
+			print("Role {} added to {}".format(role, user.name))
+	
 
 # remove flair when a user removes their reaction
 @client.event
 async def on_reaction_remove(reaction, user):
-	channel = reaction.message.channel
-	await client.send_message(channel, '{} has removed {} to the message {}'.format(user.name, reaction.emoji, reaction.message))
+	channelID = '446058435646324736'
+	if reaction.message.author != user:
+		if reaction.message.channel.id != channelID:
+			return
+		if reaction.emoji.name in REACT_LIST:
+			if reaction.emoji.name == "smash":
+				role = discord.utils.get(user.server.roles, name='smash')
+			if reaction.emoji.name == "siege":
+				role = discord.utils.get(user.server.roles, name='siege')
+			if reaction.emoji.name == "rocketleague":
+				role = discord.utils.get(user.server.roles, name='rocketleague')
+			if reaction.emoji.name == "overwatch":
+				role = discord.utils.get(user.server.roles, name='overwatch')
+			if reaction.emoji.name == "league":
+				role = discord.utils.get(user.server.roles, name='league')
+			if reaction.emoji.name == "hearthstone":
+				role = discord.utils.get(user.server.roles, name='hearthstone')
+			if reaction.emoji.name == "fortnite":
+				role = discord.utils.get(user.server.roles, name='fortnite')
+			if reaction.emoji.name == "dota2":
+				role = discord.utils.get(user.server.roles, name='dota')
+			if reaction.emoji.name == "dbfz":
+				role = discord.utils.get(user.server.roles, name='dbfz')
+			if reaction.emoji.name == "csgo":
+				role = discord.utils.get(user.server.roles, name='csgo')
+
+			await client.remove_roles(user, role)
+			print("Role {} removed from {}".format(role, user.name))
+	
+	
+
+
+
 	
 # hello
 @client.command(name='hello',
@@ -213,6 +274,7 @@ async def on_ready():
 	await client.change_presence(game=Game(name="with humans"))
 	print("Logged in as " + client.user.name)
 	print("discord.py version " + discord.__version__)
+	
 
 async def list_servers():
 	await client.wait_until_ready()
