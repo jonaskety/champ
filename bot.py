@@ -1,6 +1,6 @@
 # A Python 3 bot created by Joric using the tutorial found here: https://www.devdungeon.com/content/make-discord-bot-python
 # Some features are original, some are from the guide
-# Last Updated: 5-18-18
+# Last Updated: 10-20-18
 
 # TODO:
 # make users with certain role be able to poll only
@@ -11,6 +11,7 @@
 # imports
 import random
 import re
+import config
 import asyncio
 import discord
 from discord import Game
@@ -23,7 +24,6 @@ TOKEN = "NDk3MTk0NjE1NjI0MTcxNTMx.DpbovA.vq4vn-gkO8t5SnLWBGx2wGjzdY0"
 # creates a reaction list for polls
 POLL_LIST = ['\U0001F44D', '\U0001F44E', '\U0001F937']
 ROLE_LIST = ['smash', 'siege', 'rocketleague', 'overwatch', 'league', 'hearthstone', 'fortnite', 'dota', 'dbfz', 'csgo']
-REACT_LIST = ['smash', 'siege', 'rocketleague', 'overwatch', 'league', 'hearthstone', 'fortnite', 'dota2', 'dbfz', 'csgo']
 FLAIR_LIST = [':smash:497210123400249344', ':siege:497210123102715904', ':rocketleague:497210119646478336', ':overwatch:497210119499808770', ':league:497210123039670295', ':hearthstone:497210119772438529', ':fortnite:497210119243956236', ':dota2:497210119625637888', ':dbfz:497210124109086720', ':csgo:497210119193362433']
 
 
@@ -78,7 +78,7 @@ async def on_reaction_add(reaction, user):
 	if reaction.message.author != user:
 		if reaction.message.channel.id != channelID:
 			return
-		if reaction.emoji.name in REACT_LIST:
+		if reaction.emoji.name in ROLE_LIST:
 			if reaction.emoji.name == "smash":
 				role = discord.utils.get(user.server.roles, name='smash')
 			if reaction.emoji.name == "siege":
@@ -111,7 +111,7 @@ async def on_reaction_remove(reaction, user):
 	if reaction.message.author != user:
 		if reaction.message.channel.id != channelID:
 			return
-		if reaction.emoji.name in REACT_LIST:
+		if reaction.emoji.name in ROLE_LIST:
 			if reaction.emoji.name == "smash":
 				role = discord.utils.get(user.server.roles, name='smash')
 			if reaction.emoji.name == "siege":
@@ -287,4 +287,4 @@ async def list_servers():
 
 # runs the bot
 client.loop.create_task(list_servers())
-client.run(TOKEN)
+client.run(config.token)
