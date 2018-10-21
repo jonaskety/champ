@@ -128,7 +128,7 @@ async def on_raw_reaction_add(payload):
 			return
 		if payload.emoji.name in ROLE_LIST:
 			if payload.emoji.name == "smash":
-				role = discord.utils.get(guild.roles, name='smash')
+				role = discord.utils.get(guild.role, name='smash')
 		#	if payload.emoji.name == "siege":
 		#		role = discord.utils.get(user.server.roles, name='siege')
 		#	if payload.emoji.name == "rocketleague":
