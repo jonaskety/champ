@@ -10,7 +10,7 @@
 
 # imports
 import random
-import re
+import requests
 import config
 import asyncio
 import discord
@@ -19,7 +19,6 @@ from discord.ext.commands import Bot
 
 # sets the bot's command prefixes
 BOT_PREFIX = ("?", "!")
-TOKEN = "NDk3MTk0NjE1NjI0MTcxNTMx.DpbovA.vq4vn-gkO8t5SnLWBGx2wGjzdY0"
 
 # creates a reaction list for polls
 POLL_LIST = ['\U0001F44D', '\U0001F44E', '\U0001F937']
@@ -54,6 +53,55 @@ async def info(context):
 	await client.say(embed=embed)
 
 	
+# test steam
+@client.command(name='steam',
+				pass_context=True)
+async def steam(context):
+	r = requests.get('https://steamgaug.es/api/v2')
+	json = r.json()
+	embed = discord.Embed(color=0x505050)
+	embed.set_author(name="Steam Status", icon_url="https://images-ext-2.discordapp.net/external/yLGqhhaaGzCx2L2nDNOa0SU47p0jo3y97CsGuPNtSI8/https/upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/2000px-Steam_icon_logo.svg.png")
+	embed.set_thumbnail(url="https://images-ext-2.discordapp.net/external/yLGqhhaaGzCx2L2nDNOa0SU47p0jo3y97CsGuPNtSI8/https/upload.wikimedia.org/wikipedia/commons/thumb/8/83/Steam_icon_logo.svg/2000px-Steam_icon_logo.svg.png")
+	embed.set_footer(text="via steamgaug.es")
+	
+	if json["SteamCommunity"]["online"] == 1:
+		embed.add_field(name="Steam Community",
+				value = "Online <:yes:503287380719960074>",
+				inline = True)
+	else:
+		embed.add_field(name="Steam Community",
+				value = "Offline <:no:503287380883537947>",
+				inline = True)
+	if json["SteamStore"]["online"] == 1:
+		embed.add_field(name="Steam Store",
+				value = "Online <:yes:503287380719960074>",
+				inline = True)
+	else:
+		embed.add_field(name="Steam Store",
+				value = "Offline <:no:503287380883537947>",
+				inline = True)
+
+# # # # # # # STEAM API IS CURRENTLY DOWN FOR GAMES # # # # # # # 
+#	if json["ISteamGameCoordinator"]["570"]["online"] == 1:
+#		embed.add_field(name="Dota 2 <:dota2:497210119625637888>",
+#					value = "Online with {} players".format(json["ISteamGameCoordinator"]["570"]["stats"]["players_searching"]),
+#					inline = True)
+#	else:
+#		embed.add_field(name="Dota 2 <:dota2:497210119625637888>",
+#					value = "Offline",
+#					inline = True)
+#	if json["ISteamGameCoordinator"]["730"]["online"] == 1:
+#		embed.add_field(name="CS:GO <:csgo:497210119193362433>",
+#					value = "Online with {} players".format(json["ISteamGameCoordinator"]["730"]["stats"]["players_searching"]),
+#					inline = True)
+#	else:
+#		embed.add_field(name="CS:GO <:csgo:497210119193362433>",
+#					value = "Offline",
+#					inline = True)
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #	
+	
+	await client.say(embed=embed)
+	
 	
 	
 #flairing
@@ -74,7 +122,9 @@ async def flair(context):
 # add flair to when a user reacts
 @client.event
 async def on_reaction_add(reaction, user):
+	print(reaction.message.id)
 	channelID = '446058435646324736'
+	messageID = '503403449841352714'
 	if reaction.message.author != user:
 		if reaction.message.channel.id != channelID:
 			return
@@ -137,9 +187,7 @@ async def on_reaction_remove(reaction, user):
 			print("Role {} removed from {}".format(role, user.name))
 	
 	
-
-
-
+	
 	
 # hello
 @client.command(name='hello',
@@ -229,18 +277,6 @@ async def poll(context, *question: str):
 					await client.add_reaction(message, i)
 	if "Poll Creator" not in roleList:
 		await client.say("You do not have permission to create a poll.")
-
-'''		
-#peepo? (broked)
-@client.listen()
-async def on_message(message):
-	if message.author == client.user:
-		pass
-	else:
-		m = re.search("peppo", message.content, re.IGNORECASE)
-		if m != None:
-			await client.send_message(message.channel, "MEEEE!!!!!!")
-'''
 			
 # math commands	
 # square
@@ -251,13 +287,6 @@ async def on_message(message):
 async def square(number):
 	squared_value = int(number) * int(number)
 	await client.say(str(number) + " squared is " + str(squared_value))
-	
-# image commands
-# risa (laugh)
-@client.command(name='risa',
-				pass_context=True)
-async def risa(context):
-	client.send_file(context.message.channel, 'images\spanish-laugh.jpg') 
 	
 # functions
 def responsify(raw_response):
@@ -271,14 +300,20 @@ def responsify(raw_response):
 # It will also set the current game being played
 @client.event
 async def on_ready():
-	await client.change_presence(game=Game(name="with humans"))
+	await client.change_presence(game=Game(name=""))
 	print("Logged in as " + client.user.name)
 	print("discord.py version " + discord.__version__)
+	async for message in client.logs_from(client.get_channel('446058435646324736'), limit = 2):
+		if message.id == '503424612378607616':
+			for reaction in ROLE_LIST:
+				print(client.get_reaction_users(reaction))
+				
 	
 
 async def list_servers():
 	await client.wait_until_ready()
 	while not client.is_closed:
+		print("------")
 		print("Current servers:")
 		for server in client.servers:
 			print(server.name)
