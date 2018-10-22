@@ -24,7 +24,7 @@ BOT_PREFIX = ("?", "!")
 POLL_LIST = ['\U0001F44D', '\U0001F44E', '\U0001F937']
 ROLE_LIST = ['smash', 'siege', 'rocketleague', 'overwatch', 'league', 'hearthstone', 'fortnite', 'dota', 'dbfz', 'csgo']
 FLAIR_LIST = [':smash:497210123400249344', ':siege:497210123102715904', ':rocketleague:497210119646478336', ':overwatch:497210119499808770', ':league:497210123039670295', ':hearthstone:497210119772438529', ':fortnite:497210119243956236', ':dota2:497210119625637888', ':dbfz:497210124109086720', ':csgo:497210119193362433']
-
+ROLE_ID = [497210123400249344]
 
 client = Bot(command_prefix=BOT_PREFIX)
 
@@ -107,8 +107,7 @@ async def steam(context):
 #flairing
 @client.command(name="flair",
 				description="Allows users to flair themselves using various reactions",
-				brief="flair",
-				pass_context=True)
+				brief="flair")
 async def flair(context):
 	embed = discord.Embed(title="Roles",
 					description="React to this message using the respective logo to get your game's role! You can then access a channel dedicated to that game. To remove the role, remove your react!",
@@ -122,13 +121,16 @@ async def flair(context):
 # add flair to when a user reacts
 @client.event
 async def on_raw_reaction_add(payload):
+	guild = discord.utils.get(client.guilds, name = "Test")
 	channelID = 446058435646324736
+	member = guild.get_member(payload.user_id)
+	print(member)
 	if payload.user_id != client.user.id:
 		if payload.channel_id != channelID:
 			return
 		if payload.emoji.name in ROLE_LIST:
-			if payload.emoji.name == "smash":
-				role = discord.utils.get(guild.role, name='smash')
+			if payload.emoji.name == ROLE_LIST[0]:
+				role = guild.get_role(ROLE_ID[0])
 		#	if payload.emoji.name == "siege":
 		#		role = discord.utils.get(user.server.roles, name='siege')
 		#	if payload.emoji.name == "rocketleague":
@@ -148,8 +150,8 @@ async def on_raw_reaction_add(payload):
 		#	if payload.emoji.name == "csgo":
 		#		role = discord.utils.get(user.server.roles, name='csgo')
 				
-			await client.add_roles(user, role)
-			print("Role {} added to {}".format(role, user.name))
+			await member.add_roles(role)
+			print("Role {} added to {}".format(role, member))
 	
 
 # remove flair when a user removes their reaction
@@ -298,7 +300,7 @@ def responsify(raw_response):
 # It will also set the current game being played
 @client.event
 async def on_ready():
-	#await client.change_presence(game=Game(name=""))
+	await client.change_presence(activity=discord.Game(name="Testing Roles"))
 	print("Logged in as " + client.user.name)
 	print("discord.py version " + discord.__version__)
 
