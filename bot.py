@@ -22,7 +22,7 @@ BOT_PREFIX = ("?", "!")
 
 # creates a reaction list for polls
 POLL_LIST = ['\U0001F44D', '\U0001F44E', '\U0001F937']
-ROLE_LIST = ['smash', 'siege', 'rocketleague', 'overwatch', 'league', 'hearthstone', 'fortnite', 'dota', 'dbfz', 'csgo']
+ROLE_LIST = ['smash', 'siege', 'rocketleague', 'overwatch', 'league', 'hearthstone', 'fortnite', 'dota2', 'dbfz', 'csgo']
 FLAIR_LIST = [':smash:497210123400249344', ':siege:497210123102715904', ':rocketleague:497210119646478336', ':overwatch:497210119499808770', ':league:497210123039670295', ':hearthstone:497210119772438529', ':fortnite:497210119243956236', ':dota2:497210119625637888', ':dbfz:497210124109086720', ':csgo:497210119193362433']
 ROLE_ID = [497210123400249344]
 
@@ -109,14 +109,17 @@ async def steam(context):
 				description="Allows users to flair themselves using various reactions",
 				brief="flair")
 async def flair(context):
-	embed = discord.Embed(title="Roles",
-					description="React to this message using the respective logo to get your game's role! You can then access a channel dedicated to that game. To remove the role, remove your react!",
-					color=0x003087)
-	await context.send(embed=embed)
-	async for message in context.channel.history(limit=2):
-			if message.author == client.user:
-				for i in FLAIR_LIST:
-					await message.add_reaction(i)
+	if context.author.id != config.joric:
+		await context.send("You don't have permission for this command.")
+	else:
+		embed = discord.Embed(title="Roles",
+						description="React to this message using the respective logo to get your game's role! You can then access a channel dedicated to that game. To remove the role, remove your react!",
+						color=0x003087)
+		await context.send(embed=embed)
+		async for message in context.channel.history(limit=2):
+				if message.author == client.user:
+					for i in FLAIR_LIST:
+						await message.add_reaction(i)
 					
 # add flair to when a user reacts
 @client.event
@@ -124,31 +127,31 @@ async def on_raw_reaction_add(payload):
 	guild = discord.utils.get(client.guilds, name = "Test")
 	channelID = 446058435646324736
 	member = guild.get_member(payload.user_id)
-	print(member)
+	print(payload.user_id)
 	if payload.user_id != client.user.id:
 		if payload.channel_id != channelID:
 			return
 		if payload.emoji.name in ROLE_LIST:
 			if payload.emoji.name == ROLE_LIST[0]:
-				role = guild.get_role(ROLE_ID[0])
-		#	if payload.emoji.name == "siege":
-		#		role = discord.utils.get(user.server.roles, name='siege')
-		#	if payload.emoji.name == "rocketleague":
-		#		role = discord.utils.get(user.server.roles, name='rocketleague')
-		#	if payload.emoji.name == "overwatch":
-		#		role = discord.utils.get(user.server.roles, name='overwatch')
-		#	if payload.emoji.name == "league":
-		#		role = discord.utils.get(user.server.roles, name='league')
-		#	if payload.emoji.name == "hearthstone":
-		#		role = discord.utils.get(user.server.roles, name='hearthstone')
-		#	if payload.emoji.name == "fortnite":
-		#		role = discord.utils.get(user.server.roles, name='fortnite')
-		#	if payload.emoji.name == "dota2":
-		#		role = discord.utils.get(user.server.roles, name='dota')
-		#	if payload.emoji.name == "dbfz":
-		#		role = discord.utils.get(user.server.roles, name='dbfz')
-		#	if payload.emoji.name == "csgo":
-		#		role = discord.utils.get(user.server.roles, name='csgo')
+				role = discord.utils.get(guild.roles, name="smash")
+			if payload.emoji.name == ROLE_LIST[1]:
+				role = discord.utils.get(guild.roles, name="siege")
+			if payload.emoji.name == ROLE_LIST[2]:
+				role = discord.utils.get(guild.roles, name="rocketleague")
+			if payload.emoji.name == ROLE_LIST[3]:
+				role = discord.utils.get(guild.roles, name="overwatch")
+			if payload.emoji.name == ROLE_LIST[4]:
+				role = discord.utils.get(guild.roles, name="league")
+			if payload.emoji.name == ROLE_LIST[5]:
+				role = discord.utils.get(guild.roles, name="hearthstone")
+			if payload.emoji.name == ROLE_LIST[6]:
+				role = discord.utils.get(guild.roles, name="fortnite")
+			if payload.emoji.name == ROLE_LIST[7]:
+				role = discord.utils.get(guild.roles, name="dota2")
+			if payload.emoji.name == ROLE_LIST[8]:
+				role = discord.utils.get(guild.roles, name="dbfz")
+			if payload.emoji.name == ROLE_LIST[9]:
+				role = discord.utils.get(guild.roles, name="csgo")		
 				
 			await member.add_roles(role)
 			print("Role {} added to {}".format(role, member))
@@ -156,35 +159,37 @@ async def on_raw_reaction_add(payload):
 
 # remove flair when a user removes their reaction
 @client.event
-async def on_reaction_remove(reaction, user):
-	channelID = '446058435646324736'
-	if reaction.message.author != user:
-		if reaction.message.channel.id != channelID:
+async def on_raw_reaction_remove(payload):
+	guild = discord.utils.get(client.guilds, name = "Test")
+	channelID = 446058435646324736
+	member = guild.get_member(payload.user_id)
+	if payload.user_id != client.user.id:
+		if payload.channel_id != channelID:
 			return
 		if payload.emoji.name in ROLE_LIST:
-			if payload.emoji.name == "smash":
-				role = discord.utils.get(user.server.roles, name='smash')
-			if payload.emoji.name == "siege":
-				role = discord.utils.get(user.server.roles, name='siege')
-			if payload.emoji.name == "rocketleague":
-				role = discord.utils.get(user.server.roles, name='rocketleague')
-			if payload.emoji.name == "overwatch":
-				role = discord.utils.get(user.server.roles, name='overwatch')
-			if payload.emoji.name == "league":
-				role = discord.utils.get(user.server.roles, name='league')
-			if payload.emoji.name == "hearthstone":
-				role = discord.utils.get(user.server.roles, name='hearthstone')
-			if payload.emoji.name == "fortnite":
-				role = discord.utils.get(user.server.roles, name='fortnite')
-			if payload.emoji.name == "dota2":
-				role = discord.utils.get(user.server.roles, name='dota')
-			if payload.emoji.name == "dbfz":
-				role = discord.utils.get(user.server.roles, name='dbfz')
-			if payload.emoji.name == "csgo":
-				role = discord.utils.get(user.server.roles, name='csgo')
+			if payload.emoji.name == ROLE_LIST[0]:
+				role = discord.utils.get(guild.roles, name="smash")
+			if payload.emoji.name == ROLE_LIST[1]:
+				role = discord.utils.get(guild.roles, name="siege")
+			if payload.emoji.name == ROLE_LIST[2]:
+				role = discord.utils.get(guild.roles, name="rocketleague")
+			if payload.emoji.name == ROLE_LIST[3]:
+				role = discord.utils.get(guild.roles, name="overwatch")
+			if payload.emoji.name == ROLE_LIST[4]:
+				role = discord.utils.get(guild.roles, name="league")
+			if payload.emoji.name == ROLE_LIST[5]:
+				role = discord.utils.get(guild.roles, name="hearthstone")
+			if payload.emoji.name == ROLE_LIST[6]:
+				role = discord.utils.get(guild.roles, name="fortnite")
+			if payload.emoji.name == ROLE_LIST[7]:
+				role = discord.utils.get(guild.roles, name="dota2")
+			if payload.emoji.name == ROLE_LIST[8]:
+				role = discord.utils.get(guild.roles, name="dbfz")
+			if payload.emoji.name == ROLE_LIST[9]:
+				role = discord.utils.get(guild.roles, name="csgo")		
 
-			await client.remove_roles(user, role)
-			print("Role {} removed from {}".format(role, user.name))
+			await member.remove_roles(role)
+			print("Role {} removed from {}".format(role, member))
 	
 	
 	
@@ -231,8 +236,8 @@ async def choose(*choices: str):
 @client.command(name='ping',
 				description="Pong?",
 				brief="Pong?")
-async def ping():
-	await client.say("🏓 Pong!")
+async def ping(context):
+	await context.send("🏓 Pong!")
 	
 # kiss
 @client.command(name='kiss',
